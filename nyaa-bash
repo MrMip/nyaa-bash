@@ -16,7 +16,7 @@ case $1 in
 		case $2 in 
 			amv)	SUBCAT=1 ;;
 			eng)	SUBCAT=2 ;;
-			noeng)	SUBCAT=3 ;;
+			noneng)	SUBCAT=3 ;;
 			raw)	SUBCAT=4 ;;
 			*)		SUBCAT=2 ;;
 		esac
@@ -33,7 +33,7 @@ case $1 in
 		CAT=3
 		case $2 in 
 			eng)	SUBCAT=1 ;;
-			noeng)	SUBCAT=2 ;;
+			noneng)	SUBCAT=2 ;;
 			raw)	SUBCAT=3 ;;
 			*)		SUBCAT=1 ;;
 		esac
@@ -43,7 +43,7 @@ case $1 in
 		case $2 in 
 			eng)	SUBCAT=1 ;;
 			pv)		SUBCAT=2 ;;
-			noeng)	SUBCAT=3 ;;
+			noneng)	SUBCAT=3 ;;
 			raw)	SUBCAT=4 ;;
 			*)		SUBCAT=1 ;;
 		esac
