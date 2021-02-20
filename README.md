@@ -13,20 +13,20 @@ ex:
 
 ##### Categories and Subcategories
 
-######anime
-amv
-eng
-noneng
+###### anime
++ amv
++ eng
++ noneng
 
-######audio
-lossless
-lossy
+###### audio
++ lossless
++ lossy
 
-######liveaction
-eng
-noneng
-raw
+###### liveaction
++ eng
++ noneng
++ raw
 
-######software
-app
-game
+###### software
++ app
++ game
