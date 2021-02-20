@@ -1,0 +1,108 @@
+#!/bin/bash
+
+API="https://nyaasi-api.herokuapp.com/"
+
+echo "Search:"; read INPUT
+SEARCH=$(echo $INPUT | sed 's/\ /\+/g')
+
+SUBCAT=0
+case $1 in 
+	none){
+		CAT=0
+		SUBCAT=0
+	};;
+	anime){
+		CAT=1
+		case $2 in 
+			amv)	SUBCAT=1 ;;
+			eng)	SUBCAT=2 ;;
+			noeng)	SUBCAT=3 ;;
+			raw)	SUBCAT=4 ;;
+			*)		SUBCAT=2 ;;
+		esac
+	};;
+	audio){
+		CAT=2
+		case $2 in 
+			lossless)	SUBCAT=1 	;;
+			lossy)		SUBCAT=2 	;;
+			*)			SUBCAT=0 	;;
+		esac
+	};;
+	lit){
+		CAT=3
+		case $2 in 
+			eng)	SUBCAT=1 ;;
+			noeng)	SUBCAT=2 ;;
+			raw)	SUBCAT=3 ;;
+			*)		SUBCAT=1 ;;
+		esac
+	};;
+	liveaction){
+		CAT=4	
+		case $2 in 
+			eng)	SUBCAT=1 ;;
+			pv)		SUBCAT=2 ;;
+			noeng)	SUBCAT=3 ;;
+			raw)	SUBCAT=4 ;;
+			*)		SUBCAT=1 ;;
+		esac
+	};;
+	pic){
+		CAT=5
+		case $2 in 
+			graphics)	SUBCAT=1 	;;
+			photo)		SUBCAT=2 	;;
+			*)			SUBCAT=0 	;;
+		esac
+	};;
+	software){
+		CAT=6
+		case $2 in 
+			app)	SUBCAT=1 	;;
+			game)	SUBCAT=2 	;;
+			*)		SUBCAT=0 	;;
+		esac
+	};;
+	*){
+		# If noting is picked it defaults to anime english.
+		CAT=1
+		SUBCAT=2
+	};;
+esac
+if [ $SUBCAT -eq 0 ];then
+	RESPONSE=$(curl -s "$API?q=$SEARCH&category=$CAT" | jq '[.[] | {name:.name, seeders:.seeders|tonumber, size:.size, id:.id|tonumber, magnet:.magnet} | select(.seeders != 0)] | sort_by(.seeders)')
+else
+	RESPONSE=$(curl -s "$API?q=$SEARCH&category=$CAT&subcategory=$SUBCAT" | jq '[.[] | {name:.name, seeders:.seeders|tonumber, size:.size, id:.id|tonumber, magnet:.magnet} | select(.seeders != 0)] | sort_by(.seeders)')
+fi
+
+RESULTSNUM=$(echo $RESPONSE | jq length); ((RESULTSNUM-=1))
+
+pick (){
+	echo $(echo $RESPONSE | jq '.[] | {name:.name, seeders:.seeders, size:.size, id:.id}') | jq 
+	echo "Number Of Results: $RESULTSNUM"
+	echo "Witch do you pick:"; read INPUT 
+	CHOISE=$(echo $RESPONSE | jq ".[$INPUT]")
+	echo "You have picked:"
+	echo $CHOISE | jq '. | {name:.name, seeders:.seeders, size:.size, id:.id}'
+}
+pick
+
+KICKOUT=0
+while [ $KICKOUT -eq 0 ];do
+echo "Copy(c), Open(o), Back(b)"; read INPUT
+	case $INPUT in 
+		c)	{
+			echo $(echo $CHOISE | jq -r '.magnet') | xclip -selection clipboard
+			echo $(echo $CHOISE | jq -r '.magnet')
+			echo Has been copyed to your clipbord.
+			KICKOUT=1
+		};;
+		o)	{
+			xdg-open "$(echo $CHOISE | jq -r '.magnet') &"
+			KICKOUT=1
+		};;
+		b)	pick;	;;
+		*)	echo "\"$INPUT\" is not an option."
+	esac
+done
