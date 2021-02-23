@@ -2,7 +2,7 @@
 
 API="https://nyaasi-api.herokuapp.com/"
 
-echo "Search:"; read INPUT
+echo -n "Search: "; read INPUT
 SEARCH=$(echo $INPUT | sed 's/\ /\+/g')
 
 SUBCAT=0
@@ -81,7 +81,7 @@ RESULTSNUM=$(echo $RESPONSE | jq length); ((RESULTSNUM-=1))
 pick (){
 	echo $(echo $RESPONSE | jq '.[] | {name:.name, seeders:.seeders, size:.size, id:.id}') | jq 
 	echo "Number Of Results: $RESULTSNUM"
-	echo "Witch do you pick:"; read INPUT 
+	echo -n "Witch do you pick: "; read INPUT 
 	CHOISE=$(echo $RESPONSE | jq ".[$INPUT]")
 	echo "You have picked:"
 	echo $CHOISE | jq '. | {name:.name, seeders:.seeders, size:.size, id:.id}'
@@ -90,7 +90,7 @@ pick
 
 KICKOUT=0
 while [ $KICKOUT -eq 0 ];do
-echo "Copy(c), Open(o), Back(b)"; read INPUT
+echo -n "Copy(c), Open(o), Back(b) "; read INPUT
 	case $INPUT in 
 		c)	{
 			echo $(echo $CHOISE | jq -r '.magnet') | xclip -selection clipboard
